@@ -1,0 +1,68 @@
+nohup: ignoring input
+ * Serving Flask app 'app'
+ * Debug mode: on
+2025-07-26 08:32:30,749 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://169.254.0.21:5000
+2025-07-26 08:32:30,749 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-26 08:32:30,749 - INFO -  * Restarting with stat
+2025-07-26 08:32:31,717 - WARNING -  * Debugger is active!
+2025-07-26 08:32:31,718 - INFO -  * Debugger PIN: 104-009-245
+2025-07-26 08:32:39,551 - INFO - 127.0.0.1 - - [26/Jul/2025 08:32:39] "GET / HTTP/1.1" 200 -
+2025-07-26 08:32:39,571 - INFO - 127.0.0.1 - - [26/Jul/2025 08:32:39] "GET /static/style.css HTTP/1.1" 200 -
+2025-07-26 08:32:39,572 - INFO - 127.0.0.1 - - [26/Jul/2025 08:32:39] "GET /static/script.js HTTP/1.1" 200 -
+2025-07-26 08:32:39,717 - INFO - 127.0.0.1 - - [26/Jul/2025 08:32:39] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-07-26 08:32:39,728 - INFO - 127.0.0.1 - - [26/Jul/2025 08:32:39] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-07-26 08:32:57,563 - INFO - Collecting Reddit data for topic: artificial intelligence
+2025-07-26 08:33:35,380 - INFO - Performing sentiment analysis...
+2025-07-26 08:33:35,487 - INFO - Sentiment results saved to ./output/artificial_intelligence_sentiment_results.csv
+2025-07-26 08:33:35,487 - INFO - Generating visualizations...
+/home/ubuntu/sentiment_flask_app/visualization_generator.py:24: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+  axes[0].legend(title='Content Type')
+/home/ubuntu/sentiment_flask_app/visualization_generator.py:75: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.barplot(x=sentiment_counts.index, y=sentiment_counts.values, palette=["green", "red", "blue"])
+2025-07-26 08:33:39,316 - INFO - Generating summary report...
+2025-07-26 08:33:39,349 - INFO - Analysis complete. Report available at ./output/artificial_intelligence_sentiment_report.md
+2025-07-26 08:33:39,389 - INFO - 127.0.0.1 - - [26/Jul/2025 08:33:39] "POST /analyze HTTP/1.1" 200 -
+2025-07-26 08:33:39,412 - INFO - 127.0.0.1 - - [26/Jul/2025 08:33:39] "[35m[1mGET /download/artificial_intelligence_sentiment_plots.png HTTP/1.1[0m" 500 -
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/flask/app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/flask/app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/sentiment_flask_app/app.py", line 112, in download_file
+    return send_file(os.path.join(config.OUTPUT_DIR, filename), as_attachment=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/flask/helpers.py", line 511, in send_file
+    return werkzeug.utils.send_file(  # type: ignore[return-value]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/werkzeug/utils.py", line 428, in send_file
+    stat = os.stat(path)
+           ^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/ubuntu/sentiment_flask_app/./output/artificial_intelligence_sentiment_plots.png'
+2025-07-26 08:33:39,413 - INFO - 127.0.0.1 - - [26/Jul/2025 08:33:39] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-07-26 08:33:39,417 - INFO - 127.0.0.1 - - [26/Jul/2025 08:33:39] "GET /download/artificial_intelligence_wordcloud.png HTTP/1.1" 200 -
+2025-07-26 08:33:39,422 - INFO - 127.0.0.1 - - [26/Jul/2025 08:33:39] "GET /download/artificial_intelligence_sentiment_counts.png HTTP/1.1" 200 -
+2025-07-26 08:33:39,427 - INFO - 127.0.0.1 - - [26/Jul/2025 08:33:39] "[33mGET /artificial_intelligence_sentiment_plots.png HTTP/1.1[0m" 404 -
+2025-07-26 08:33:39,428 - INFO - 127.0.0.1 - - [26/Jul/2025 08:33:39] "[33mGET /artificial_intelligence_wordcloud.png HTTP/1.1[0m" 404 -
+2025-07-26 08:33:39,430 - INFO - 127.0.0.1 - - [26/Jul/2025 08:33:39] "[33mGET /artificial_intelligence_sentiment_counts.png HTTP/1.1[0m" 404 -
+2025-07-26 08:33:39,432 - INFO - 127.0.0.1 - - [26/Jul/2025 08:33:39] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+2025-07-26 08:33:39,508 - INFO - 127.0.0.1 - - [26/Jul/2025 08:33:39] "[36mGET /static/style.css HTTP/1.1[0m" 304 -

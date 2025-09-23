@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            color: #ffffff;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0a0a0a;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            max-width: 400px;
+            width: 90%;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+            animation: fadeIn 1s ease-out;
+            transition: opacity 0.5s ease;
+            overflow: hidden;
+        }
+
+        .container.fade-out {
+            opacity: 0;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #00ccff;
+            margin-right: 0.5rem;
+            object-fit: cover;
+        }
+
+        h1 {
+            font-weight: 600;
+            font-size: 1.8rem;
+            overflow-wrap: break-word;
+        }
+
+        .info {
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+            overflow-wrap: break-word;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            font-size: 1rem;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            overflow-wrap: break-word;
+            word-break: break-all;
+            color: #ffffff;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 0.9rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow-wrap: break-word;
+            color: #ffffff;
+        }
+
+        input[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+        }
+
+        input[type="submit"]:active {
+            transform: translateY(0);
+            box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+        }
+
+        .error {
+            background: rgba(255, 107, 107, 0.1);
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            overflow-wrap: break-word;
+            word-break: break-all;
+            max-width: 100%;
+        }
+
+        .success {
+            background: rgba(0, 255, 204, 0.1);
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            overflow-wrap: break-word;
+            word-break: break-all;
+            max-width: 100%;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 500px) {
+            .container {
+                width: 95%;
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .logo {
+                width: 30px;
+                height: 30px;
+            }
+        }
+    </style>
+    <script>
+        function validateForm() {
+            const code = document.getElementById('code').value;
+            const container = document.querySelector('.container');
+
+            if (code.length !== 6 || !/^\d+$/.test(code)) {
+                alert('Please enter a 6-digit verification code.');
+                return false;
+            }
+
+            container.classList.add('fade-out');
+            setTimeout(() => {
+                return true;
+            }, 500);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='%2300ccff' stroke-width='2'/%3E%3Ctext x='50' y='55' font-size='30' text-anchor='middle' fill='%23ffffff' font-family='Poppins, sans-serif'%3EX%3C/text%3E%3C/svg%3E" alt="Logo" class="logo">
+            <h1>Verify Email</h1>
+        </div>
+        <div class="info">
+            <p>Enter the 6-digit code sent to {{ email }}.</p>
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <form method="POST" action="{{ url_for('verify', email=email) }}" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="code">Verification Code:</label>
+                <input type="text" id="code" name="code" required>
+            </div>
+            <input type="submit" value="Verify">
+        </form>
+    </div>
+</body>
+</html>

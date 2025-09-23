@@ -1,0 +1,25 @@
+c:\Users\sayak\OneDrive\sentiment_flask_app\
+├── output/
+│   ├── Python_Programming_sentiment_plots.png
+│   ├── Python_Programming_wordcloud.png
+│   ├── Python_Programming_sentiment_counts.png
+│   ├── Python_Programming_sentiment_report.md
+│   ├── Python_Programming_sentiment_results.csv
+├── sentiment_flask_app/
+│   ├── users.db
+│   ├── app.py
+│   ├── main.py
+│   ├── config.py
+│   ├── data_collector.py
+│   ├── sentiment_analyzer.py
+│   ├── visualization_generator.py
+│   ├── report_generator.py
+│   ├── templates/
+│   │   ├── index.html
+│   │   ├── results.html
+│   │   ├── login.html
+│   │   ├── signup.html
+│   ├── .env
+
+
+

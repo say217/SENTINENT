@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - {{ topic }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+    * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: radial-gradient(ellipse at top, #0a0a1a 0%, #050714 30%, #03040a 70%, #000000 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            color: #e0e0e0;
+            font-weight: 300;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 50%;
+            background: radial-gradient(ellipse at center, rgba(90, 103, 216, 0.3) 0%, rgba(90, 103, 216, 0.1) 30%, transparent 60%);
+            pointer-events: none;
+            z-index: 1;
+            filter: blur(50px);
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            color: #ffffff;
+            font-size: 2.2rem;
+            font-weight: 300;
+        }
+        .header p {
+            color: #a0a0a0;
+            font-size: 1rem;
+            font-weight: 300;
+        }
+        .back-btn {
+            padding: 10px 20px;
+            background: rgba(90, 103, 216, 0.2);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 300;
+            transition: background 0.3s ease, transform 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        .back-btn:hover {
+            background: rgba(90, 103, 216, 0.4);
+            transform: translateY(-2px);
+        }
+        .error-message {
+            background: rgba(248, 215, 218, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            color: #f8d7da;
+            border: 1px solid rgba(248, 215, 218, 0.2);
+            backdrop-filter: blur(5px);
+            margin-bottom: 20px;
+        }
+        .dashboard-overview, .visualizations-section, .report-section, .dataset-section {
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            /* Added to ensure sections have a minimum height for consistency */
+            min-height: 150px;
+        }
+        h2, h3 {
+            color: #ffffff;
+            font-weight: 300;
+            /* Added margin to create gaps between subtopics */
+            margin-bottom: 15px;
+        }
+        .viz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            /* Added to ensure grid doesn't collapse if empty */
+            min-height: 100px;
+        }
+        .viz-card {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s ease;
+            /* Added minimum height for empty cards */
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .viz-card:hover {
+            transform: translateY(-5px);
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+        .image-container img.error-placeholder {
+            opacity: 0.5;
+            /* Added minimum height for placeholder images */
+            min-height: 150px;
+            object-fit: cover;
+        }
+        .image-container p {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            font-weight: 300;
+        }
+        .report-content pre {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            color: #e0e0e0;
+            font-weight: 300;
+        }
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        .markdown-content th, .markdown-content td {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px;
+            text-align: left;
+            color: #e0e0e0;
+            font-weight: 300;
+        }
+        .markdown-content th {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .dataset-table-container {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 400px;
+            max-width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .dataset-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: auto;
+        }
+        .dataset-table th, .dataset-table td {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+            min-width: 80px;
+            color: #e0e0e0;
+            font-weight: 300;
+        }
+        .dataset-table th {
+            background: rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .dataset-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .dataset-table tr:hover {
+            background: rgba(90, 103, 216, 0.1);
+        }
+        .dataset-table th.id-column, .dataset-table td.id-column {
+            min-width: 120px;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .dataset-table th.text-column, .dataset-table td.text-column {
+            min-width: 300px;
+            max-width: 400px;
+            white-space: normal;
+            word-break: break-word;
+        }
+        .dataset-table th.url-column, .dataset-table td.url-column {
+            min-width: 200px;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .dataset-table th.numeric-column, .dataset-table td.numeric-column {
+            min-width: 100px;
+            text-align: right;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .popup img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 5px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        /* Added to ensure empty sections have visible spacing */
+        .empty-section {
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div>
+                <h1>Sentiment Analysis Results</h1>
+                <p>Analysis for: <strong>{{ topic }}</strong></p>
+            </div>
+            <a href="/" class="back-btn">Analyze Another Topic</a>
+        </header>
+        {% if error %}
+        <div class="error-message">
+            <h2>Error</h2>
+            <p>{{ error }}</p>
+        </div>
+        {% else %}
+        <main class="results-content">
+            <div class="visualizations-section">
+                <h2>Visualizations</h2>
+                <div class="viz-grid">
+                    {% if topic_image %}
+                    <div class="viz-card">
+                        <h3>Topic Image</h3>
+                        <div class="image-container">
+                            <img src="{{ url_for('output_file', filename=topic_image) }}" alt="Topic Image for {{ topic }}" class="viz-image" onclick="showPopup(this.src)" onerror="this.src='/static/placeholder.jpg'; this.classList.add('error-placeholder');">
+                            <p>Image from Pixabay</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="viz-card empty-section">
+                        <p>No image found for "{{ topic }}".</p>
+                    </div>
+                    {% endif %}
+                    {% if distribution_image %}
+                    <div class="viz-card">
+                        <h3>Sentiment Distribution</h3>
+                        <div class="image-container">
+                            <img src="{{ url_for('output_file', filename=distribution_image) }}" alt="Sentiment Distribution" class="viz-image" onclick="showPopup(this.src)" onerror="this.src='/static/placeholder.jpg'; this.classList.add('error-placeholder');">
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="viz-card empty-section">
+                        <p>No sentiment distribution available.</p>
+                    </div>
+                    {% endif %}
+                    {% if subreddit_image %}
+                    <div class="viz-card">
+                        <h3>Sentiment by Subreddit</h3>
+                        <div class="image-container">
+                            <img src="{{ url_for('output_file', filename=subreddit_image) }}" alt="Sentiment by Subreddit" class="viz-image" onclick="showPopup(this.src)" onerror="this.src='/static/placeholder.jpg'; this.classList.add('error-placeholder');">
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="viz-card empty-section">
+                        <p>No sentiment by subreddit available.</p>
+                    </div>
+                    {% endif %}
+                    {% if trend_image %}
+                    <div class="viz-card">
+                        <h3>Sentiment Trend Over Time</h3>
+                        <div class="image-container">
+                            <img src="{{ url_for('output_file', filename=trend_image) }}" alt="Sentiment Trend Over Time" class="viz-image" onclick="showPopup(this.src)" onerror="this.src='/static/placeholder.jpg'; this.classList.add('error-placeholder');">
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="viz-card empty-section">
+                        <p>No sentiment trend available.</p>
+                    </div>
+                    {% endif %}
+                    {% if type_image %}
+                    <div class="viz-card">
+                        <h3>Average Sentiment by Type</h3>
+                        <div class="image-container">
+                            <img src="{{ url_for('output_file', filename=type_image) }}" alt="Average Sentiment by Type" class="viz-image" onclick="showPopup(this.src)" onerror="this.src='/static/placeholder.jpg'; this.classList.add('error-placeholder');">
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="viz-card empty-section">
+                        <p>No average sentiment by type available.</p>
+                    </div>
+                    {% endif %}
+                    {% if wordcloud_image %}
+                    <div class="viz-card">
+                        <h3>Word Cloud</h3>
+                        <div class="image-container">
+                            <img src="{{ url_for('output_file', filename=wordcloud_image) }}" alt="Word Cloud" class="viz-image" onclick="showPopup(this.src)" onerror="this.src='/static/placeholder.jpg'; this.classList.add('error-placeholder');">
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="viz-card empty-section">
+                        <p>No word cloud available.</p>
+                    </div>
+                    {% endif %}
+                    {% if sentiment_counts_image %}
+                    <div class="viz-card">
+                        <h3>Sentiment Distribution (Bar)</h3>
+                        <div class="image-container">
+                            <img src="{{ url_for('output_file', filename=sentiment_counts_image) }}" alt="Sentiment Counts" class="viz-image" onclick="showPopup(this.src)" onerror="this.src='/static/placeholder.jpg'; this.classList.add('error-placeholder');">
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="viz-card empty-section">
+                        <p>No sentiment distribution (bar) available.</p>
+                    </div>
+                    {% endif %}
+                    {% if heatmap_image %}
+                    <div class="viz-card">
+                        <h3>Sentiment Correlation Heatmap</h3>
+                        <div class="image-container">
+                            <img src="{{ url_for('output_file', filename=heatmap_image) }}" alt="Sentiment Correlation Heatmap" class="viz-image" onclick="showPopup(this.src)" onerror="this.src='/static/placeholder.jpg'; this.classList.add('error-placeholder');">
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="viz-card empty-section">
+                        <p>No sentiment correlation heatmap available.</p>
+                    </div>
+                    {% endif %}
+                    {% if pie_image %}
+                    <div class="viz-card">
+                        <h3>Sentiment Distribution (Pie)</h3>
+                        <div class="image-container">
+                            <img src="{{ url_for('output_file', filename=pie_image) }}" alt="Sentiment Distribution Pie" class="viz-image" onclick="showPopup(this.src)" onerror="this.src='/static/placeholder.jpg'; this.classList.add('error-placeholder');">
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="viz-card empty-section">
+                        <p>No sentiment distribution (pie) available.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="report-section">
+                <h2>Analysis Report</h2>
+                <div class="report-card">
+                    <div class="report-content">
+                        <div class="markdown-content">
+                            {% if report_content %}
+                            {{ report_content | safe }}
+                            {% else %}
+                            <div class="empty-section">
+                                <p>No analysis report available.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dataset-section">
+                <h2>Dataset Information</h2>
+                <div class="dataset-card">
+                    <h3>Data Collection Details</h3>
+                    <p>The sentiment analysis was performed on Reddit data collected for the topic "<strong>{{ topic }}</strong>". The dataset includes:</p>
+                    <ul>
+                        <li>Reddit posts and comments from relevant subreddits</li>
+                        <li>Sentiment scores using VADER and TextBlob algorithms</li>
+                        <li>Combined compound scores for comprehensive analysis</li>
+                        <li>Metadata including subreddit, timestamp, and content type</li>
+                    </ul>
+                    {% if csv_data %}
+                    <h3>Dataset Preview (Up to 20 Rows)</h3>
+                    <div class="dataset-table-container">
+                        <table class="dataset-table">
+                            <thead>
+                                <tr>
+                                    {% for column in csv_columns %}
+                                    <th class="{{ 'id-column' if column == 'id' else 'text-column' if column == 'text' else 'url-column' if column == 'url' else 'numeric-column' if column in ['vader_neg', 'vader_neu', 'vader_pos', 'vader_compound', 'textblob_polarity', 'textblob_subjectivity', 'combined_compound', 'confidence'] else '' }}">
+                                        {{ column }}
+                                    </th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in csv_data %}
+                                <tr>
+                                    {% for column in csv_columns %}
+                                    <td class="{{ 'id-column' if column == 'id' else 'text-column' if column == 'text' else 'url-column' if column == 'url' else 'numeric-column' if column in ['vader_neg', 'vader_neu', 'vader_pos', 'vader_compound', 'textblob_polarity', 'textblob_subjectivity', 'combined_compound', 'confidence'] else '' }}">
+                                        {{ row[column] | safe }}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="empty-section">
+                        <p>No dataset preview available.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+        {% endif %}
+    </div>
+    <div class="popup" id="imagePopup">
+        <img src="" alt="Popup Image">
+        <button class="close-btn" onclick="closePopup()">×</button>
+    </div>
+    <script>
+        function showPopup(src) {
+            const popup = document.getElementById('imagePopup');
+            const popupImg = popup.querySelector('img');
+            popupImg.src = src;
+            popup.style.display = 'flex';
+        }
+        function closePopup() {
+            const popup = document.getElementById('imagePopup');
+            popup.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+            color: #ffffff;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0a0a0a;
+            overflow: hidden;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .loader-container {
+            position: relative;
+            max-width: 400px;
+            width: 90%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 1s ease-out;
+            transition: opacity 1s ease;
+            z-index: 1;
+        }
+
+        .loader-container.fade-out {
+            opacity: 0;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid #00ccff;
+            margin-bottom: 1rem;
+            object-fit: cover;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        h1 {
+            font-weight: 700;
+            font-size: 2.2rem;
+            overflow-wrap: break-word;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.3);
+            animation: textGlow 2s ease-in-out infinite;
+        }
+
+        .subtitle {
+            font-weight: 300;
+            font-size: 1rem;
+            text-align: center;
+            opacity: 0.8;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes glow {
+            0% { transform: scale(1); box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.3); }
+            50% { transform: scale(1.15); box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.5); }
+            100% { transform: scale(1); box-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.3); }
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.3); }
+            50% { text-shadow: 0 0 15px rgba(0, 255, 255, 0.7), 0 0 25px rgba(0, 255, 255, 0.4); }
+            100% { text-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.3); }
+        }
+
+        @media (max-width: 500px) {
+            .loader-container {
+                width: 95%;
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+            }
+
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        window.onload = function() {
+            // Create circular texture for rounder dots
+            function createParticleTexture() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 32;
+                canvas.height = 32;
+                const context = canvas.getContext('2d');
+                context.beginPath();
+                context.arc(16, 16, 15, 0, Math.PI * 2);
+                context.fillStyle = '#ffffff';
+                context.fill();
+                return new THREE.CanvasTexture(canvas);
+            }
+
+            // WebGL Animation
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particleCount = 1000;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 10;
+                positions[i + 1] = (Math.random() - 0.5) * 10;
+                positions[i + 2] = (Math.random() - 0.5) * 10;
+
+                // Alternate between gold (#FFD700) and cyan (#00FFFF)
+                if (i % 2 === 0) {
+                    colors[i] = 1.0; // R
+                    colors[i + 1] = 0.843; // G
+                    colors[i + 2] = 0.0; // B
+                } else {
+                    colors[i] = 0.0; // R
+                    colors[i + 1] = 1.0; // G
+                    colors[i + 2] = 1.0; // B
+                }
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.1, // Larger particles
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.9,
+                map: createParticleTexture(), // Round dots
+                blending: THREE.AdditiveBlending, // Glow effect
+                depthWrite: false
+            });
+
+            const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particles);
+
+            camera.position.z = 5;
+
+            function animate() {
+                requestAnimationFrame(animate);
+                particles.rotation.y += 0.002;
+                particles.rotation.x += 0.001;
+                // Add slight movement to particles
+                const positions = particlesGeometry.attributes.position.array;
+                for (let i = 0; i < particleCount * 3; i += 3) {
+                    positions[i + 1] += Math.sin(Date.now() * 0.001 + positions[i]) * 0.001;
+                    positions[i] += Math.cos(Date.now() * 0.001 + positions[i + 1]) * 0.001;
+                }
+                particlesGeometry.attributes.position.needsUpdate = true;
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // Loader redirect to Flask index route
+            const loader = document.querySelector('.loader-container');
+            setTimeout(() => {
+                loader.classList.add('fade-out');
+                setTimeout(() => {
+                    window.location.href = "/"; // Redirect to Flask index route
+                }, 1000); // Match the fade-out transition duration
+            }, 6000); // Display loader for 6 seconds
+        };
+    </script>
+</head>
+<body>
+    <div class="loader-container">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='%2300ccff' stroke-width='2'/%3E%3Ctext x='50' y='55' font-size='30' text-anchor='middle' fill='%23ffffff' font-family='Roboto, sans-serif'%3EX%3C/text%3E%3C/svg%3E" alt="Logo" class="logo">
+        <h1>Welcome to Sentinet</h1>
+        <p class="subtitle">A multi-platform sentiment and trend analysis agent</p>
+    </div>
+</body>
+</html>
