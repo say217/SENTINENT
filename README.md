@@ -179,6 +179,7 @@ cd sentinent
 │   ├── .env
 ```
 
-## ## Contributing
+## Contributing
 
 Contributions to this project are always welcome! To contribute, first fork the repository to your own GitHub account. Next, create a feature branch using `git checkout -b feature/your-feature` and make the desired changes in your branch. Once your changes are ready, commit them with a descriptive message like `git commit -m "Add your feature"`, and then push the branch to your fork using `git push origin feature/your-feature`. Finally, open a pull request to the original repository, providing a clear description of the changes you made so they can be reviewed and merged.
+
